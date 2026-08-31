@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Safety and Automation System</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --line: #334155;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --temp: #fb923c;
+    --humid: #38bdf8;
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn: #facc15;
+    --gas: #c084fc;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 24px 16px 40px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 28px; }
+
+  h1 { font-size: 1.5rem; margin: 0; font-weight: 600; }
+
+  .cards { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
+
+  @media (max-width: 380px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px 16px;
+    text-align: center;
+  }
+
+  .label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .value {
+    font-size: 2.4rem;
+    font-weight: 650;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .unit { font-size: 1rem; font-weight: 500; color: var(--muted); margin-left: 2px; }
+
+  #temp .value { color: var(--temp); }
+  #humid .value { color: var(--humid); }
+
+  .extra {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+    min-height: 1em;
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex: none;
+  }
+
+  .dot.ok  { background: var(--ok); }
+  .dot.bad { background: var(--bad); }
+
+  /* Dim the readings while the connection is down, so stale numbers
+     are visibly stale rather than silently wrong. */
+  .stale .value, .stale .extra { opacity: 0.35; }
+
+  /* Verdict banner - the headline answer, above the individual numbers. */
+  .verdict {
+    border-radius: 14px;
+    padding: 18px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    background: var(--card);
+  }
+
+  .verdict-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  .verdict-detail {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .verdict.safe    { border-color: var(--ok);   background: rgba(74, 222, 128, 0.10); }
+  .verdict.safe    .verdict-title { color: var(--ok); }
+  .verdict.caution { border-color: var(--warn); background: rgba(250, 204, 21, 0.10); }
+  .verdict.caution .verdict-title { color: var(--warn); }
+  .verdict.danger  { border-color: var(--bad);  background: rgba(248, 113, 113, 0.14); }
+  .verdict.danger  .verdict-title { color: var(--bad); }
+  .verdict.unknown .verdict-title { color: var(--muted); }
+
+  /* Draw attention to a real danger without being unreadable. */
+  @media (prefers-reduced-motion: no-preference) {
+    .verdict.danger { animation: pulse 1.4s ease-in-out infinite; }
+  }
+  @keyframes pulse {
+    0%, 100% { border-color: var(--bad); }
+    50%      { border-color: rgba(248, 113, 113, 0.35); }
+  }
+
+  /* The gas card spans the full width under the two climate cards. */
+  .card.wide { grid-column: 1 / -1; }
+
+  #gas .value { color: var(--gas); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Home Safety and Automation System</h1>
+  </header>
+
+  <div class="verdict unknown" id="verdict">
+    <div class="verdict-title" id="verdictTitle">CHECKING</div>
+    <div class="verdict-detail" id="verdictDetail">Waiting for sensor data</div>
+  </div>
+
+  <div class="cards">
+    <div class="card" id="temp">
+      <div class="label">Temperature</div>
+      <div><span class="value" id="tempVal">--</span><span class="unit">&deg;C</span></div>
+      <div class="extra" id="tempF"></div>
+    </div>
+
+    <div class="card" id="humid">
+      <div class="label">Humidity</div>
+      <div><span class="value" id="humidVal">--</span><span class="unit">%</span></div>
+      <div class="extra" id="heatIndex"></div>
+    </div>
+
+    <div class="card wide" id="gas">
+      <div class="label">Gas (MQ-4)</div>
+      <div><span class="value" id="gasVal">--</span></div>
+      <div class="extra" id="gasDetail"></div>
+    </div>
+  </div>
+
+  <div class="status">
+    <span class="dot" id="dot"></span>
+    <span id="statusText">Connecting&hellip;</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // %%POLL_MS%% is substituted by the firmware from config.h.
+  var POLL_MS = %%POLL_MS%%;
+
+  var els = {
+    body:          document.body,
+    temp:          document.getElementById("tempVal"),
+    tempF:         document.getElementById("tempF"),
+    humid:         document.getElementById("humidVal"),
+    heatIndex:     document.getElementById("heatIndex"),
+    gas:           document.getElementById("gasVal"),
+    gasDetail:     document.getElementById("gasDetail"),
+    verdict:       document.getElementById("verdict"),
+    verdictTitle:  document.getElementById("verdictTitle"),
+    verdictDetail: document.getElementById("verdictDetail"),
+    dot:           document.getElementById("dot"),
+    statusText:    document.getElementById("statusText")
+  };
+
+  function setStatus(state, message) {
+    els.dot.className = "dot" + (state ? " " + state : "");
+    els.statusText.textContent = message;
+    els.body.classList.toggle("stale", state !== "ok");
+  }
+
+  // Invalid fields arrive as null, so guard every number before formatting.
+  function fixed(value, digits) {
+    return (typeof value === "number") ? value.toFixed(digits) : "--";
+  }
+
+  function renderClimate(data) {
+    if (data.valid) {
+      els.temp.textContent      = fixed(data.temperatureC, 1);
+      els.humid.textContent     = fixed(data.humidity, 1);
+      els.tempF.textContent     = fixed(data.temperatureF, 1) + " °F";
+      els.heatIndex.textContent = "Feels like " + fixed(data.heatIndexC, 1) + " °C";
+    } else {
+      els.temp.textContent      = "--";
+      els.humid.textContent     = "--";
+      els.tempF.textContent     = "";
+      els.heatIndex.textContent = "sensor unavailable";
+    }
+  }
+
+  function renderGas(data) {
+    // The DO output is a threshold crossing, so there is no number to show -
+    // only the state the comparator is reporting.
+    els.gas.textContent = data.gasLevel || "--";
+    els.gasDetail.textContent = data.gasValid
+      ? "Threshold set by the trim pot on the module"
+      : "Heater warming up - no verdict yet";
+  }
+
+  function renderVerdict(data) {
+    var v = data.verdict || {};
+    els.verdict.className = "verdict " + (v.state || "unknown");
+    els.verdictTitle.textContent = v.title || "UNKNOWN";
+    els.verdictDetail.textContent = v.detail || "";
+  }
+
+  function render(data) {
+    renderClimate(data);
+    renderGas(data);
+    renderVerdict(data);
+    setStatus("ok", "Updated " + new Date().toLocaleTimeString());
+  }
+
+  function poll() {
+    fetch("/api/reading", { cache: "no-store" })
+      .then(function (res) {
+        if (!res.ok) { throw new Error("HTTP " + res.status); }
+        return res.json();
+      })
+      .then(render)
+      .catch(function () {
+        // Never leave a stale "SAFE" on screen when we cannot reach the board.
+        els.verdict.className = "verdict unknown";
+        els.verdictTitle.textContent = "NO DATA";
+        els.verdictDetail.textContent = "Lost connection to the sensor node";
+        setStatus("bad", "Disconnected — retrying…");
+      });
+  }
+
+  poll();
+  setInterval(poll, POLL_MS);
+})();
+</script>
+</body>
+</html>

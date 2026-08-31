@@ -1,0 +1,5 @@
+{
+  "name": "Buzzer",
+  "version": "1.0.0",
+  "description": "Non-blocking intermittent buzzer driver for the home automation node"
+}

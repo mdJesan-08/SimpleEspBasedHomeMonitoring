@@ -1,0 +1,5 @@
+{
+  "name": "GasSensor",
+  "version": "1.0.0",
+  "description": "Non-blocking MQ-4 methane sensor helper with a safety verdict for the home automation node"
+}

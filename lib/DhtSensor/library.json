@@ -1,0 +1,8 @@
+{
+  "name": "DhtSensor",
+  "version": "1.0.0",
+  "description": "Non-blocking DHT-22 temperature and humidity helper for the home automation node",
+  "dependencies": {
+    "adafruit/DHT sensor library": "^1.4.6"
+  }
+}
