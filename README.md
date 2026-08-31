@@ -11,6 +11,20 @@ Built with PlatformIO and the Arduino framework for the ESP32.
 
 ## Demo
 
+![The assembled prototype: ESP32, DHT-22, MQ-4 and buzzer on a breadboard](images/prototype.png)
+
+<p align="center"><em>The assembled prototype — ESP32, DHT-22, MQ-4 and buzzer.</em></p>
+
+<!--
+  MORE IMAGES: drop the file into images/ and add a line here, for example
+      ![Live dashboard](images/dashboard.png)
+  The path is relative to this file, so it is just images/<filename>.
+  Do NOT use a https://github.com/.../blob/... URL - that is a web page, not
+  the image, and it renders as a broken icon.
+-->
+
+### Video walkthrough
+
 <!--
   VIDEO: GitHub will not play an .mp4 that is committed to the repository -
   it only renders a download link. To get an inline player, open a new issue
@@ -22,14 +36,6 @@ Built with PlatformIO and the Arduino framework for the ESP32.
 -->
 
 _Video demo — paste the uploaded URL here._
-
-| Assembled prototype | Live dashboard |
-| :---: | :---: |
-| ![Assembled prototype on breadboard](docs/media/prototype.jpg) | ![Web dashboard showing a live reading](docs/media/dashboard.png) |
-
-| Wiring detail | Alarm state |
-| :---: | :---: |
-| ![Close-up of the breadboard wiring](docs/media/wiring.jpg) | ![Dashboard showing the gas alarm triggered](docs/media/alarm.jpg) |
 
 ---
 
