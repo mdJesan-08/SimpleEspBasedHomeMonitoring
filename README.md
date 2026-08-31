@@ -82,6 +82,68 @@ _Video demo — paste the uploaded URL here._
 | | I/O | **GPIO 19** | Active low |
 | | GND | GND | |
 
+### Circuit diagram
+
+![Circuit diagram: ESP32 NodeMCU-32S wired to a DHT-22, an MQ-4 gas sensor and an active-low buzzer](images/circuitDiagram.jpeg)
+
+<details>
+<summary>Text version of the same circuit</summary>
+
+```
+                        ESP32 NodeMCU-32S
+                     +-----------------------+
+                     |                       |
+                     |  3V3             5V   |
+                     |  GND             GND  |
+                     |  GPIO 4               |
+                     |  GPIO 18              |
+                     |  GPIO 19              |
+                     +-----------------------+
+
+
+  DHT-22  --  temperature + humidity
+  ------------------------------------------------------------------
+                                +--------------------o  VCC
+                                |
+       3V3  o-------------------+
+                                |
+                               | | 10k pull-up
+                               |_|
+                                |
+    GPIO 4  o-------------------+--------------------o  DATA
+
+       GND  o----------------------------------------o  GND
+
+
+  MQ-4  --  methane / natural gas, digital output
+  ------------------------------------------------------------------
+        5V  o----------------------------------------o  VCC
+
+       GND  o----------------------------------------o  GND
+
+                                            10k
+   GPIO 18  o------------------+--------/\/\/\------o  DO
+                               |
+                              | | 20k
+                              |_|
+                               |
+       GND  o------------------+
+
+             The divider drops the module's 5 V idle-high DO
+             level to ~3.3 V.  ESP32 pins are not 5 V tolerant.
+
+
+  Buzzer  --  active low
+  ------------------------------------------------------------------
+        5V  o----------------------------------------o  VCC
+
+   GPIO 19  o----------------------------------------o  I/O
+
+       GND  o----------------------------------------o  GND
+```
+
+</details>
+
 > [!WARNING]
 > **The MQ-4's DO line needs a voltage divider.** Most MQ breakouts pull DO up
 > to VCC, so with the module powered at 5 V the idle-high level is 5 V — and
