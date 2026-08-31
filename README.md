@@ -25,17 +25,22 @@ Built with PlatformIO and the Arduino framework for the ESP32.
 
 ### Video walkthrough
 
-<!--
-  VIDEO: GitHub will not play an .mp4 that is committed to the repository -
-  it only renders a download link. To get an inline player, open a new issue
-  in this repo, drag the video file into the comment box, wait for it to
-  upload, then copy the generated
-  https://github.com/user-attachments/assets/... URL and paste it on the line
-  below (a bare URL on its own line - no Markdown image syntax). You can close
-  the issue afterwards; the video stays hosted.
--->
+[**▶ Watch the demo video**](images/projectDemonastartion.mp4)
 
-_Video demo — paste the uploaded URL here._
+A short walkthrough of the working prototype. GitHub opens it in its own file
+viewer and plays it there.
+
+<!--
+  The link above is a click-through, which is all GitHub allows for a video
+  committed to the repository - Markdown has no video syntax, and the <video>
+  tag is stripped from READMEs.
+
+  To get a player embedded directly in this page instead: open a new issue in
+  this repo, drag the .mp4 into the comment box, wait for the upload to finish,
+  then copy the generated https://github.com/user-attachments/assets/... URL
+  and paste it here as a bare URL on its own line. You can close the issue
+  afterwards; the video stays hosted.
+-->
 
 ---
 
